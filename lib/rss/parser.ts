@@ -24,16 +24,19 @@ export interface ParsedFeedItem {
 export async function parseFeed(url: string): Promise<ParsedFeedItem[]> {
   try {
     const feed = await parser.parseURL(url);
-    return (feed.items || []).map((item) => ({
-      title: item.title || "",
-      link: item.link || "",
-      pubDate: item.pubDate || item.isoDate || undefined,
-      contentSnippet: item.contentSnippet || item.summary || undefined,
-      content: item.content || undefined,
-      description: item.description || undefined,
-      media: (item as any).media || undefined,
-      thumbnail: (item as any).thumbnail || undefined,
-    }));
+    return (feed.items || []).map((item) => {
+      const itemAny = item as any;
+      return {
+        title: item.title || "",
+        link: item.link || "",
+        pubDate: item.pubDate || item.isoDate || undefined,
+        contentSnippet: item.contentSnippet || item.summary || undefined,
+        content: item.content || undefined,
+        description: itemAny.description || undefined,
+        media: itemAny.media || undefined,
+        thumbnail: itemAny.thumbnail || undefined,
+      };
+    });
   } catch (error) {
     console.error(`Error parsing feed ${url}:`, error);
     return [];

@@ -53,7 +53,7 @@ export async function insertArticle(article: {
   try {
     await sql`
       INSERT INTO articles (title, description, link, category, source, published_at, image_url)
-      VALUES (${article.title}, ${article.description}, ${article.link}, ${article.category}, ${article.source}, ${article.publishedAt}, ${article.imageUrl})
+      VALUES (${article.title}, ${article.description}, ${article.link}, ${article.category}, ${article.source}, ${article.publishedAt.toISOString()}, ${article.imageUrl})
       ON CONFLICT (link) DO NOTHING
     `;
     return true;
