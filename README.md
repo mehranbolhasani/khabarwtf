@@ -6,7 +6,7 @@ A tiny news aggregator in Farsi that collects news from multiple RSS feeds and d
 
 - 📰 Aggregates news from multiple Farsi RSS feeds
 - 🏷️ Category filtering
-- 🔄 Automatic updates every 12 hours via Vercel Cron Jobs
+- 🔄 Automatic updates every 24 hours (daily) via Vercel Cron Jobs
 - 📱 Responsive design with RTL support
 - 🎨 Modern UI built with shadcn/ui and Tailwind CSS
 - 🚀 Deployed on Vercel
@@ -169,7 +169,7 @@ Yes! Vercel can automatically deploy from GitHub. Here's how:
 Once set up, Vercel will **automatically deploy**:
 - ✅ Every push to `main` branch → Production deployment
 - ✅ Every pull request → Preview deployment
-- ✅ Cron jobs will run automatically every 12 hours
+- ✅ Cron jobs will run automatically every 24 hours (daily at midnight UTC)
 
 You can also manually trigger deployments from the Vercel dashboard.
 
