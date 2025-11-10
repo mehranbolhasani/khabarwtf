@@ -1,23 +1,28 @@
 # khabarwtf - خبر جمع‌کن
 
-A tiny news aggregator in Farsi that collects news from multiple RSS feeds and displays them in a clean, modern interface.
+A tiny, simple news aggregator in Farsi that collects news from multiple RSS feeds, summarizes them with Gemini AI, and displays them in a clean, modern interface.
 
 ## Features
 
 - 📰 Aggregates news from multiple Farsi RSS feeds
-- 🏷️ Category filtering
-- 🔄 Automatic updates every 24 hours (daily) via Vercel Cron Jobs
+- 🤖 AI-powered summaries using Google Gemini API
+- 🏷️ Category-based organization (world, politics, tech, sport, science, economy, culture)
+- 🔄 Automatic updates every 24 hours via Vercel Cron Jobs
 - 📱 Responsive design with RTL support
 - 🎨 Modern UI built with shadcn/ui and Tailwind CSS
-- 🚀 Deployed on Vercel
+- 🌓 Dark/light mode support
+- 🔤 Estedad font for beautiful Farsi typography
+- 💾 Static JSON caching (no database needed)
+- 🚀 Deployed on Vercel with GitHub auto-deploy
 
 ## Tech Stack
 
-- **Framework**: Next.js 14+ (App Router) with TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui components
-- **Database**: Vercel Postgres
+- **Framework**: Next.js 16+ (App Router) with TypeScript
+- **Styling**: Tailwind CSS v4 + shadcn/ui components
+- **AI**: Google Gemini API for article summarization
 - **RSS Parsing**: rss-parser
-- **Scheduling**: Vercel Cron Jobs
+- **Scheduling**: Vercel Cron Jobs (24 hours)
+- **Storage**: Static JSON files (no database)
 
 ## Setup
 
@@ -25,123 +30,52 @@ A tiny news aggregator in Farsi that collects news from multiple RSS feeds and d
 
 - Node.js 18+ and npm
 - Vercel account
-- Vercel Postgres database
+- Google Gemini API key ([Get one here](https://makersuite.google.com/app/apikey))
 
 ### Local Development
 
-Yes, you can test the project locally! Here's how:
+1. **Clone the repository**:
+```bash
+git clone https://github.com/mehranbolhasani/khabarwtf.git
+cd khabarwtf
+```
 
-#### Option 1: Using Vercel Postgres (Recommended)
+2. **Install dependencies**:
+```bash
+npm install
+```
 
-This uses the same database as production, so you can test with real data.
+3. **Create `.env.local`** with your API keys:
+```env
+GEMINI_API_KEY=your_gemini_api_key
+CRON_SECRET=your_secret_key_for_cron_endpoint
+```
 
-1. **Install Vercel CLI** (if you haven't):
-   ```bash
-   npm i -g vercel
-   ```
+4. **Run the development server**:
+```bash
+npm run dev
+```
 
-2. **Login to Vercel**:
-   ```bash
-   vercel login
-   ```
+5. **Open [http://localhost:3000](http://localhost:3000)** in your browser.
 
-3. **Link your project**:
-   ```bash
-   vercel link
-   ```
-   This will connect your local project to your Vercel project.
+6. **Generate initial news data** (first time only):
+```bash
+# Make sure the dev server is running first!
+npm run fetch-news
+```
 
-4. **Pull environment variables**:
-   ```bash
-   vercel env pull .env.local
-   ```
-   This automatically creates `.env.local` with all your database credentials from Vercel.
+This will fetch RSS feeds, summarize articles with Gemini, and save them to `public/data/news/*.json`.
 
-5. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-6. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
-
-7. **Open [http://localhost:3000](http://localhost:3000)** in your browser.
-
-8. **Initialize the database** (first time only):
-   - Make sure the dev server is running (`npm run dev`)
-   - The database will be initialized automatically when you call the cron endpoint
-   - Trigger it manually:
-     ```bash
-     # Option 1: Use the npm script (easier)
-     npm run fetch-news
-     
-     # Option 2: Manual curl command
-     curl http://localhost:3000/api/cron/update-news \
-       -H "Authorization: Bearer your_cron_secret"
-     ```
-
-#### Option 2: Manual Environment Setup
-
-If you prefer not to use Vercel CLI:
-
-1. **Clone and install**:
-   ```bash
-   git clone https://github.com/mehranbolhasani/khabarwtf.git
-   cd khabarwtf
-   npm install
-   ```
-
-2. **Create `.env.local`** with your database credentials:
-   ```env
-   # Get these from Vercel Dashboard → Your Project → Storage → Postgres → .env.local
-   POSTGRES_URL=your_postgres_url
-   POSTGRES_PRISMA_URL=your_prisma_url
-   POSTGRES_URL_NON_POOLING=your_non_pooling_url
-   POSTGRES_USER=your_user
-   POSTGRES_HOST=your_host
-   POSTGRES_PASSWORD=your_password
-   POSTGRES_DATABASE=your_database
-
-   CRON_SECRET=your_secret_key_for_cron_endpoint
-   NEXT_PUBLIC_BASE_URL=http://localhost:3000
-   ```
-
-3. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
-
-4. **Initialize the database** (first time only):
-   ```bash
-   # Make sure the dev server is running first!
-   npm run fetch-news
-   
-   # Or manually:
-   curl http://localhost:3000/api/cron/update-news \
-     -H "Authorization: Bearer your_cron_secret"
-   ```
-
-#### Local Testing Tips
-
-- **Hot reload**: The dev server auto-reloads on code changes
-- **Database**: Uses the same Vercel Postgres database (or you can set up a local Postgres)
-- **API routes**: Test at `http://localhost:3000/api/news`
-- **Cron endpoint**: Test manually with the curl command above
-
-## Deployment on Vercel with GitHub Auto-Deploy
-
-Yes! Vercel can automatically deploy from GitHub. Here's how:
+## Deployment on Vercel
 
 ### First-Time Setup
 
-1. **Push your code to GitHub** (if you haven't already):
-   ```bash
-   git add .
-   git commit -m "Initial commit"
-   git push origin main
-   ```
+1. **Push your code to GitHub**:
+```bash
+git add .
+git commit -m "Initial commit"
+git push origin main
+```
 
 2. **Import your repository in Vercel**:
    - Go to [vercel.com](https://vercel.com)
@@ -149,20 +83,25 @@ Yes! Vercel can automatically deploy from GitHub. Here's how:
    - Import your GitHub repository (`khabarwtf`)
    - Vercel will automatically detect it's a Next.js project
 
-3. **Set up Vercel Postgres**:
-   - In your Vercel project dashboard, go to "Storage" tab
-   - Click "Create Database" → "Postgres"
-   - Create a new database (e.g., "khabarwtf-db")
-
-4. **Add environment variables** in Vercel project settings:
+3. **Add environment variables** in Vercel project settings:
    - Go to "Settings" → "Environment Variables"
-   - Vercel will automatically add all `POSTGRES_*` variables from your database
+   - Add `GEMINI_API_KEY` - Your Google Gemini API key
    - Add `CRON_SECRET` - Generate a random secret (e.g., using `openssl rand -hex 32`)
-   - `NEXT_PUBLIC_BASE_URL` is optional (Vercel auto-detects it)
 
-5. **Deploy**:
+4. **Deploy**:
    - Click "Deploy" (or it will auto-deploy from GitHub)
    - Wait for the build to complete
+
+5. **Trigger initial news fetch**:
+   - Go to your Vercel project → Functions tab
+   - Find `/api/cron/update-news`
+   - Click "Invoke" to manually trigger it
+   - This will generate the initial JSON files
+
+6. **Commit generated JSON files** (important!):
+   - The cron job generates JSON files in `public/data/news/`
+   - Commit these files to git so they're available at build time
+   - Or set up a GitHub Action to auto-commit them
 
 ### Automatic Deployments
 
@@ -170,8 +109,6 @@ Once set up, Vercel will **automatically deploy**:
 - ✅ Every push to `main` branch → Production deployment
 - ✅ Every pull request → Preview deployment
 - ✅ Cron jobs will run automatically every 24 hours (daily at midnight UTC)
-
-You can also manually trigger deployments from the Vercel dashboard.
 
 ## RSS Feeds
 
@@ -182,24 +119,61 @@ The app currently aggregates from these Farsi news sources:
 - DW Persian
 - VOA Persian
 
-You can add more feeds by editing `lib/rss/feeds.ts`.
+You can add more feeds by editing `lib/rss/feeds.ts` and assigning them to appropriate categories.
+
+## Categories
+
+- **جهان** (World) - International news
+- **سیاست** (Politics) - Political news
+- **فناوری** (Tech) - Technology news
+- **ورزش** (Sport) - Sports news
+- **علم** (Science) - Science news
+- **اقتصاد** (Economy) - Economic news
+- **فرهنگ** (Culture) - Cultural news
 
 ## Project Structure
 
 ```
 /app
   /api
-    /cron/update-news    # Cron job endpoint
-    /news                 # News API endpoint
+    /cron/update-news    # Cron job endpoint (fetches RSS, summarizes, saves JSON)
+    /news                 # News API endpoint (reads JSON files)
   /components
     /ui                  # shadcn/ui components
     ArticleCard.tsx      # Article display component
-    CategoryFilter.tsx   # Category filter component
+    CategoryTabs.tsx     # Category navigation tabs
+    ThemeToggle.tsx      # Dark/light mode toggle
   /lib
     /rss                 # RSS fetching and parsing
-    /db                  # Database client and schema
+    /ai                  # Gemini AI summarization
+    /cache               # JSON file read/write utilities
+    fonts.ts             # Estedad font configuration
+  /public
+    /data/news           # Generated JSON files (committed to git)
+    /fonts               # Estedad font files
   page.tsx               # Main homepage
 ```
+
+## How It Works
+
+1. **Cron Job** (`/api/cron/update-news`) runs every 24 hours:
+   - Fetches RSS feeds from configured sources
+   - Parses articles
+   - Summarizes each article using Gemini AI
+   - Groups articles by category
+   - Saves to JSON files in `public/data/news/`
+
+2. **Frontend** reads from JSON files:
+   - Displays articles by category
+   - Shows AI-generated summaries
+   - Provides links to original articles
+
+3. **No Database**: Everything is stored in static JSON files, making it simple and fast.
+
+## Environment Variables
+
+- `GEMINI_API_KEY` - Required for article summarization
+- `CRON_SECRET` - Secret key to protect the cron endpoint
 
 ## License
 

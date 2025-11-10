@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchAllFeeds } from "@/lib/rss/fetcher";
-import { initializeDatabase } from "@/lib/db/client";
+import { processAndSaveNews } from "@/lib/rss/fetcher";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,16 +16,13 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Initialize database on first run
-    await initializeDatabase();
-
-    // Fetch all feeds
-    const result = await fetchAllFeeds();
+    // Fetch all feeds, summarize with Gemini, and save to JSON files
+    await processAndSaveNews();
 
     return NextResponse.json({
       success: true,
-      message: "News updated successfully",
-      feeds: result,
+      message: "News updated successfully and saved to JSON files",
+      timestamp: new Date().toISOString(),
     });
   } catch (error) {
     console.error("Error updating news:", error);
@@ -39,4 +35,3 @@ export async function GET(request: Request) {
     );
   }
 }
-

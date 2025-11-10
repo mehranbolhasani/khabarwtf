@@ -34,3 +34,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# generated data files (will be created by cron job, but we commit them for static serving)
+/public/data/news/*.json

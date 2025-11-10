@@ -8,7 +8,7 @@ import { ExternalLink } from "lucide-react";
 interface ArticleCardProps {
   id: string;
   title: string;
-  description: string | null;
+  summary: string | null;
   link: string;
   category: string;
   source: string;
@@ -18,7 +18,7 @@ interface ArticleCardProps {
 
 export function ArticleCard({
   title,
-  description,
+  summary,
   link,
   category,
   source,
@@ -58,10 +58,10 @@ export function ArticleCard({
           </Link>
         </CardTitle>
       </CardHeader>
-      {description && (
+      {summary && (
         <CardContent className="flex-grow">
-          <CardDescription className="line-clamp-3">
-            {description}
+          <CardDescription className="line-clamp-3 text-sm">
+            {summary}
           </CardDescription>
         </CardContent>
       )}

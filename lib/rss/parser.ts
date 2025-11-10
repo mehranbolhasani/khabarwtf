@@ -1,5 +1,4 @@
 import Parser from "rss-parser";
-import type { Article } from "@/types/article";
 
 const parser = new Parser({
   customFields: {
@@ -63,7 +62,15 @@ export function mapFeedItemToArticle(
   item: ParsedFeedItem,
   category: string,
   source: string
-): Omit<Article, "id" | "fetchedAt"> {
+): {
+  title: string;
+  description: string | null;
+  link: string;
+  category: string;
+  source: string;
+  publishedAt: Date;
+  imageUrl: string | null;
+} {
   const description =
     item.contentSnippet || item.description || null;
   const publishedAt = item.pubDate
